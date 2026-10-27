@@ -5,21 +5,45 @@ import {
   isDisposableDomain,
 } from "./disposableDomains.js";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function hasWhitespace(value) {
+  for (let i = 0; i < value.length; i += 1) {
+    if (/\s/.test(value[i])) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 export function normalizeEmailDomain(email) {
   const value = String(email ?? "").trim().toLowerCase();
 
-  if (!EMAIL_RE.test(value)) {
-    return null;
-  }
-
   const atIndex = value.lastIndexOf("@");
-  if (atIndex <= 0 || atIndex === value.length - 1) {
+  if (atIndex <= 0 || atIndex !== value.indexOf("@") || atIndex === value.length - 1) {
     return null;
   }
 
-  const domain = value.slice(atIndex + 1).replace(/\.+$/, "");
+  const local = value.slice(0, atIndex);
+  let domain = value.slice(atIndex + 1);
+
+  if (!local || !domain || hasWhitespace(local) || hasWhitespace(domain)) {
+    return null;
+  }
+
+  while (domain.endsWith(".")) {
+    domain = domain.slice(0, -1);
+  }
+
+  if (
+    !domain ||
+    domain.startsWith(".") ||
+    domain.endsWith(".") ||
+    domain.includes("..") ||
+    !domain.includes(".")
+  ) {
+    return null;
+  }
+
   const asciiDomain = domainToASCII(domain);
 
   if (!asciiDomain || asciiDomain.includes(" ")) {

@@ -15,7 +15,11 @@ let refreshTimer = null;
 let refreshInFlight = null;
 
 function normalizeDomain(domain) {
-  const value = String(domain ?? "").trim().toLowerCase().replace(/\.+$/, "");
+  let value = String(domain ?? "").trim().toLowerCase();
+
+  while (value.endsWith(".")) {
+    value = value.slice(0, -1);
+  }
 
   if (!value) {
     return null;
