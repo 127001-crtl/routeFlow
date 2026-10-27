@@ -37,6 +37,13 @@
   cursor: not-allowed;
 }
 
+.rf-field-error {
+  margin: 8px 0 0;
+  color: var(--rf-required);
+  font-size: 12px;
+  line-height: 16px;
+}
+
 /* Terms line */
 .rf-terms {
   margin: 13px 0 0;

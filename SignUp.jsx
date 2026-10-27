@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css"; // shared tokens, card, header, buttons, fields
 import "./SignUp.css"; // sign-up-only styles
+import { checkEmailAddress } from "./emailCheckClient";
 
 function Logo() {
   return (
@@ -21,11 +22,37 @@ const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); //this uses regex t
 export default function SignUp({ onSignUp, onLogin, onGoogle, onApple }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [isChecking, setIsChecking] = useState(false);
   const canSubmit = isEmail(email);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (canSubmit) onSignUp?.({ email });
+    if (!canSubmit || isChecking) {
+      return;
+    }
+
+    setIsChecking(true);
+    setError("");
+
+    const result = await checkEmailAddress(email).catch(() => ({
+      allowed: false,
+      disposable: false,
+      error: "Unable to validate email address right now. Please try again.",
+    }));
+
+    setIsChecking(false);
+
+    if (!result.allowed) {
+      if (result.disposable) {
+        setError("Disposable email addresses are not allowed.");
+      } else {
+        setError(result.error || "Please enter a valid email address.");
+      }
+      return;
+    }
+
+    onSignUp?.({ email });
   };
 
   return (
@@ -73,12 +100,16 @@ export default function SignUp({ onSignUp, onLogin, onGoogle, onApple }) {
               autoComplete="email"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError("");
+              }}
             />
           </div>
+          {error && <p className="rf-field-error">{error}</p>}
 
-          <button type="submit" className="rf-btn rf-btn--primary" disabled={!canSubmit}>
-            Sign up
+          <button type="submit" className="rf-btn rf-btn--primary" disabled={!canSubmit || isChecking}>
+            {isChecking ? "Checking..." : "Sign up"}
           </button>
 
           <p className="rf-terms">
