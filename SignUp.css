@@ -1,0 +1,58 @@
+/* Sign-up-only styles. Load after Login.css. */
+
+:root {
+  --rf-terms-text: #848484;
+  --rf-terms-link: #257fea;
+  --rf-disabled-bg: #f6f7f9;
+  --rf-disabled-text: rgba(132, 132, 132, 0.37);
+}
+
+.rf-body--signup {
+  padding-bottom: 28px;
+}
+
+.rf-body--signup .rf-title {
+  margin-bottom: 33px;
+}
+
+.rf-body--signup .rf-divider {
+  margin: 18px 0 31px;
+}
+
+/* "Log in" button in the header is semibold on this screen */
+.rf-btn--semibold {
+  font-weight: 600;
+}
+
+/* Sign up button: greyed out until the email is valid */
+.rf-body--signup .rf-btn--primary {
+  margin-top: 27px;
+  font-weight: 600;
+}
+
+.rf-btn--primary:disabled {
+  background: var(--rf-disabled-bg);
+  border-color: var(--rf-disabled-bg);
+  color: var(--rf-disabled-text);
+  cursor: not-allowed;
+}
+
+/* Terms line */
+.rf-terms {
+  margin: 13px 0 0;
+  text-align: center;
+  color: var(--rf-terms-text);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+}
+
+.rf-terms a {
+  color: var(--rf-terms-link);
+  text-decoration: underline;
+}
+
+.rf-terms a:focus-visible {
+  outline: 2px solid var(--rf-terms-link);
+  outline-offset: 2px;
+}
